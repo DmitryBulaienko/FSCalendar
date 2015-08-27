@@ -61,4 +61,9 @@ typedef NS_OPTIONS(NSInteger, FSCalendarCellStyle) {
 @property (strong, nonatomic) UIColor *weeksBackgroundColor;
 @property (strong, nonatomic) UIColor *eventHighlightedColor;
 
+//for some reasons removed in 0.11 version
+@property (strong, nonatomic) UIFont *titleFont;
+@property (strong, nonatomic) UIFont *subtitleFont;
+@property (strong, nonatomic) UIFont *weekdayFont;
+
 @end

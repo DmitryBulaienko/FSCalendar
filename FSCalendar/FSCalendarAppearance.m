@@ -372,7 +372,7 @@
         // reload appearance
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
         [_calendar.header.collectionView reloadData];
-        [_calendar.weekdays setValue:[UIFont systemFontOfSize:_weekdayTextSize] forKeyPath:@"font"];
+        [_calendar.weekdays setValue:self.weekdayFont forKeyPath:@"font"];
     }
 }
 
@@ -382,6 +382,33 @@
     if (_weeksBackgroundColor != weeksBackgroundColor) {
         _weeksBackgroundColor = weeksBackgroundColor;
         _calendar.weeksBackgroundView.backgroundColor = weeksBackgroundColor;
+    }
+}
+
+- (void)setTitleFont:(UIFont *)font {
+    if (_titleFont != font) {
+        _titleFont = font;
+        if (_autoAdjustTitleSize) {
+            return;
+        }
+        [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
+    }
+}
+
+- (void)setSubtitleFont:(UIFont *)font {
+    if (_subtitleFont != font) {
+        _subtitleFont = font;
+        if (_autoAdjustTitleSize) {
+            return;
+        }
+        [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
+    }
+}
+
+- (void)setWeekdayFont:(UIFont *)weekdayFont {
+    if (![_weekdayFont isEqual:weekdayFont]) {
+        _weekdayFont = weekdayFont;
+        [_calendar.weekdays setValue:weekdayFont forKeyPath:@"font"];
     }
 }
 

@@ -16,8 +16,10 @@
 
 #import "FSCalendarHeaderTouchDeliver.h"
 
-#define kDefaultHeaderHeight 40
-#define kWeekHeight roundf(self.fs_height/12)
+#define kDefaultHeaderHeight 43.f
+#define kWeekHeight 25.f //roundf(self.fs_height/11.8f)
+#define kHorizontalPadding self.fs_height * 0.025f
+#define kVerticalPadding self.fs_height * 0.03f
 
 static BOOL FSCalendarInInterfaceBuilder = NO;
 
@@ -109,7 +111,7 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
     
     NSArray *weekSymbols = _calendar.shortStandaloneWeekdaySymbols;
     _weekdays = [NSMutableArray arrayWithCapacity:weekSymbols.count];
-    UIFont *weekdayFont = [UIFont systemFontOfSize:_appearance.weekdayTextSize];
+    UIFont *weekdayFont = _appearance.weekdayFont ? _appearance.weekdayFont : [UIFont systemFontOfSize:_appearance.weekdayTextSize];
     for (int i = 0; i < weekSymbols.count; i++) {
         UILabel *weekdayLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         weekdayLabel.text = weekSymbols[i];
@@ -187,6 +189,19 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
+- (void)updateWeekdaysFrames {
+    CGFloat horizontalPadding = kHorizontalPadding;
+    CGFloat width = (self.fs_width - (horizontalPadding * 2)) / _weekdays.count;
+    CGFloat height = kWeekHeight;
+    [_weekdays enumerateObjectsUsingBlock:^(UILabel *weekdayLabel, NSUInteger idx, BOOL *stop) {
+        NSUInteger absoluteIndex = ((idx-(_firstWeekday-1))+7)%7;
+        weekdayLabel.frame = CGRectMake((absoluteIndex * width) + horizontalPadding,
+                                        _header.fs_height,
+                                        width,
+                                        height);
+    }];
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -207,16 +222,9 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
                                                 _header.fs_height,
                                                 self.fs_width,
                                                 kWeekHeight);
+
+    [self updateWeekdaysFrames];
     
-    CGFloat width = self.fs_width/_weekdays.count;
-    CGFloat height = kWeekHeight;
-    [_weekdays enumerateObjectsUsingBlock:^(UILabel *weekdayLabel, NSUInteger idx, BOOL *stop) {
-        NSUInteger absoluteIndex = ((idx-(_firstWeekday-1))+7)%7;
-        weekdayLabel.frame = CGRectMake(absoluteIndex*width,
-                                        _header.fs_height,
-                                        width,
-                                        height);
-    }];
     [_appearance adjustTitleIfNecessary];
     
     if (_needsAdjustingMonthPosition) {
@@ -557,9 +565,6 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
     _header.scrollDirection = self.collectionViewFlowLayout.scrollDirection;
     [_header reloadData];
     
-    [_weekdays setValue:[UIFont systemFontOfSize:_appearance.weekdayTextSize] forKey:@"font"];
-    CGFloat width = self.fs_width/_weekdays.count;
-    CGFloat height = kWeekHeight;
     [_calendar.shortStandaloneWeekdaySymbols enumerateObjectsUsingBlock:^(NSString *symbol, NSUInteger index, BOOL *stop) {
         if (index >= _weekdays.count) {
             *stop = YES;
@@ -568,13 +573,11 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
         UILabel *weekdayLabel = _weekdays[index];
         weekdayLabel.text = symbol;
     }];
-    [_weekdays enumerateObjectsUsingBlock:^(UILabel *weekdayLabel, NSUInteger idx, BOOL *stop) {
-        NSUInteger absoluteIndex = ((idx-(_firstWeekday-1))+7)%7;
-        weekdayLabel.frame = CGRectMake(absoluteIndex * width,
-                                        _header.fs_height,
-                                        width,
-                                        height);
-    }];
+    
+    UIFont *weekdayFont = _appearance.weekdayFont ? _appearance.weekdayFont : [UIFont systemFontOfSize:_appearance.weekdayTextSize];
+    [_weekdays setValue:weekdayFont forKey:@"font"];
+    [self updateWeekdaysFrames];
+    
     [_collectionView reloadData];
     if (_selectedDate) {
         _supressEvent = YES;
