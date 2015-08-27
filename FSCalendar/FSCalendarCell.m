@@ -16,6 +16,9 @@
 
 @implementation FSCalendarCell
 
+static CGFloat FSEventLayerVerticalCenterDelta = -8.0f;
+static CGFloat FSBackgroundLayerMinimumInteritemSpacing = 7.0f;
+
 #pragma mark - Init and life cycle
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -63,14 +66,18 @@
 {
     [super setBounds:bounds];
     CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
-    CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
+    CGFloat diameter = MIN(self.bounds.size.height, self.bounds.size.width) - FSBackgroundLayerMinimumInteritemSpacing;
     _backgroundLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
                                         (titleHeight-diameter)/2,
                                         diameter,
                                         diameter);
     
-    CGFloat eventSize = _backgroundLayer.frame.size.height/6.0;
-    _eventLayer.frame = CGRectMake((_backgroundLayer.frame.size.width-eventSize)/2+_backgroundLayer.frame.origin.x, CGRectGetMaxY(_backgroundLayer.frame)+eventSize*0.2, eventSize*0.8, eventSize*0.8);
+    CGFloat eventSize = _backgroundLayer.frame.size.height/8.0f;
+    _eventLayer.frame = CGRectMake((_backgroundLayer.frame.size.width-eventSize) / 2 + _backgroundLayer.frame.origin.x,
+                                   titleHeight + FSEventLayerVerticalCenterDelta,
+                                   eventSize,
+                                   eventSize);
+    
     _eventLayer.path = [UIBezierPath bezierPathWithOvalInRect:_eventLayer.bounds].CGPath;
 }
 
@@ -91,13 +98,23 @@
     return [super isSelected] || ([self.calendar.selectedDate fs_isEqualToDateForDay:_date] && !_deselecting);
 }
 
+#pragma mark - BackgroundLayer States management
+
+- (void)updateBackgroundLayerState {
+    UIColor *currentStateColor = [self colorForCurrentStateInDictionary:_appearance.backgroundColors];
+    _backgroundLayer.strokeColor = currentStateColor.CGColor;
+    _backgroundLayer.fillColor = [self isToday] ? currentStateColor.CGColor : [UIColor clearColor].CGColor;
+    _backgroundLayer.lineWidth = 2.0f;
+}
+
 #pragma mark - Public
 
 - (void)performSelecting
 {
     _backgroundLayer.hidden = NO;
     _backgroundLayer.path = [UIBezierPath bezierPathWithOvalInRect:_backgroundLayer.bounds].CGPath;
-    _backgroundLayer.fillColor = [self colorForCurrentStateInDictionary:_appearance.backgroundColors].CGColor;
+    [self updateBackgroundLayerState];
+    
     CAAnimationGroup *group = [CAAnimationGroup animation];
     CABasicAnimation *zoomOut = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
     zoomOut.fromValue = @0.3;
@@ -131,7 +148,7 @@
     _subtitleLabel.text = _subtitle;
     _titleLabel.textColor = [self colorForCurrentStateInDictionary:_appearance.titleColors];
     _subtitleLabel.textColor = [self colorForCurrentStateInDictionary:_appearance.subtitleColors];
-    _backgroundLayer.fillColor = [self colorForCurrentStateInDictionary:_appearance.backgroundColors].CGColor;
+    [self updateBackgroundLayerState];
     
     CGFloat titleHeight = [_titleLabel.text sizeWithAttributes:@{NSFontAttributeName:self.titleLabel.font}].height;
     if (_subtitleLabel.text) {
