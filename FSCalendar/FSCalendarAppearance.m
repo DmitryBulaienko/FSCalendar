@@ -65,7 +65,6 @@
         
         _cellStyle = FSCalendarCellStyleCircle;
         _eventColor = [kBlue colorWithAlphaComponent:0.75];
-        
     }
     return self;
 }
@@ -374,6 +373,15 @@
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
         [_calendar.header.collectionView reloadData];
         [_calendar.weekdays setValue:[UIFont systemFontOfSize:_weekdayTextSize] forKeyPath:@"font"];
+    }
+}
+
+#pragma mark - Custom
+
+- (void)setWeeksBackgroundColor:(UIColor *)weeksBackgroundColor {
+    if (_weeksBackgroundColor != weeksBackgroundColor) {
+        _weeksBackgroundColor = weeksBackgroundColor;
+        _calendar.weeksBackgroundView.backgroundColor = weeksBackgroundColor;
     }
 }
 

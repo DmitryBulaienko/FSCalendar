@@ -49,6 +49,7 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
 @property (weak  , nonatomic) UICollectionViewFlowLayout *collectionViewFlowLayout;
 @property (weak  , nonatomic) FSCalendarHeader           *header;
 @property (weak  , nonatomic) FSCalendarHeaderTouchDeliver *deliver;
+@property (weak  , nonatomic) UIView *weeksBackgroundView;
 
 @property (strong, nonatomic) NSCalendar                 *calendar;
 @property (assign, nonatomic) BOOL                       supressEvent;
@@ -161,18 +162,24 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
     _today = [NSDate date].fs_dateByIgnoringTimeComponents;
     _currentMonth = [_today copy];
     
-    CALayer *topBorderLayer = [CALayer layer];
-    topBorderLayer.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.2].CGColor;
-    [self.layer addSublayer:topBorderLayer];
-    self.topBorderLayer = topBorderLayer;
-    
-    CALayer *bottomBorderLayer = [CALayer layer];
-    bottomBorderLayer.backgroundColor = _topBorderLayer.backgroundColor;
-    [self.layer addSublayer:bottomBorderLayer];
-    self.bottomBorderLayer = bottomBorderLayer;
+    if (self.appearance.topBottomBorderIsShown) {
+        CALayer *topBorderLayer = [CALayer layer];
+        topBorderLayer.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.2].CGColor;
+        [self.layer addSublayer:topBorderLayer];
+        self.topBorderLayer = topBorderLayer;
+        
+        CALayer *bottomBorderLayer = [CALayer layer];
+        bottomBorderLayer.backgroundColor = _topBorderLayer.backgroundColor;
+        [self.layer addSublayer:bottomBorderLayer];
+        self.bottomBorderLayer = bottomBorderLayer;
+    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
+    UIView *weeksBackgroundView = [[UIView alloc] init];
+    weeksBackgroundView.backgroundColor = _appearance.weeksBackgroundColor;
+    [self addSubview:weeksBackgroundView];
+    self.weeksBackgroundView = weeksBackgroundView;
 }
 
 - (void)dealloc
@@ -195,6 +202,11 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
                                                     (_collectionView.fs_height-padding*2)/6
                                                     );
     _collectionViewFlowLayout.sectionInset = UIEdgeInsetsMake(padding, 0, padding, 0);
+    
+    self.weeksBackgroundView.frame = CGRectMake(0,
+                                                _header.fs_height,
+                                                self.fs_width,
+                                                kWeekHeight);
     
     CGFloat width = self.fs_width/_weekdays.count;
     CGFloat height = kWeekHeight;
@@ -223,7 +235,7 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
 - (void)layoutSublayersOfLayer:(CALayer *)layer
 {
     [super layoutSublayersOfLayer:layer];
-    if (layer == self.layer) {
+    if (layer == self.layer && self.appearance.topBottomBorderIsShown) {
         _topBorderLayer.frame = CGRectMake(0, -1, self.fs_width, 1);
         _bottomBorderLayer.frame = CGRectMake(0, self.fs_height, self.fs_width, 1);
     }

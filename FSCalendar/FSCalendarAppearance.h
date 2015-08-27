@@ -55,4 +55,10 @@ typedef NS_OPTIONS(NSInteger, FSCalendarCellStyle) {
 @property (assign, nonatomic) BOOL      fakeSubtitles;
 @property (assign, nonatomic) NSInteger fakedSelectedDay;
 
+#pragma mark - Custom
+
+@property (assign, nonatomic) BOOL topBottomBorderIsShown;
+@property (strong, nonatomic) UIColor *weeksBackgroundColor;
+@property (strong, nonatomic) UIColor *eventHighlightedColor;
+
 @end

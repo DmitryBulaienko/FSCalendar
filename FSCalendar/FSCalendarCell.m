@@ -151,12 +151,14 @@
         _titleLabel.frame = CGRectMake(0, 0, self.fs_width, floor(self.contentView.fs_height*5.0/6.0));
         _subtitleLabel.hidden = YES;
     }
-    _backgroundLayer.hidden = !self.selected && !self.isToday;
+    
+    BOOL isToday = [self isToday];
+    _backgroundLayer.hidden = !self.selected && !isToday;
     _backgroundLayer.path = _appearance.cellStyle == FSCalendarCellStyleCircle ?
     [UIBezierPath bezierPathWithOvalInRect:_backgroundLayer.bounds].CGPath :
     [UIBezierPath bezierPathWithRect:_backgroundLayer.bounds].CGPath;
     _eventLayer.hidden = !_hasEvent;
-    _eventLayer.fillColor = _appearance.eventColor.CGColor;
+    _eventLayer.fillColor = !isToday ? _appearance.eventColor.CGColor : _appearance.eventHighlightedColor.CGColor;
     
     if (_image) {
         _imageLayer.hidden = NO;
