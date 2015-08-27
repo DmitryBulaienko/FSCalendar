@@ -112,7 +112,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     FSCalendarHeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    cell.titleLabel.font = _appearance.titleFont ? _appearance.titleFont : [UIFont systemFontOfSize:_appearance.headerTitleTextSize];
+    cell.titleLabel.font = _appearance.headerTitleFont ? _appearance.headerTitleFont : [UIFont systemFontOfSize:_appearance.headerTitleTextSize];
     cell.titleLabel.textColor = _appearance.headerTitleColor;
     _dateFormatter.dateFormat = _appearance.headerDateFormat;
     if (_scrollDirection == UICollectionViewScrollDirectionHorizontal) {
@@ -195,8 +195,8 @@
     if (self) {
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        titleLabel.numberOfLines = 0;
+//        titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+//        titleLabel.numberOfLines = 0;
         [self.contentView addSubview:titleLabel];
         self.titleLabel = titleLabel;
     }

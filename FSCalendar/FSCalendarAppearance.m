@@ -369,6 +369,11 @@
         _headerTitleTextSize = _titleTextSize + 3;
         _weekdayTextSize     = _titleTextSize;
         
+        _titleFont       = [_titleFont fontWithSize:_titleTextSize];
+        _subtitleFont    = [_subtitleFont fontWithSize:_subtitleTextSize];
+        _headerTitleFont = [_headerTitleFont fontWithSize:_headerTitleTextSize];
+        _weekdayFont     = _titleFont;
+        
         // reload appearance
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
         [_calendar.header.collectionView reloadData];
@@ -409,6 +414,14 @@
     if (![_weekdayFont isEqual:weekdayFont]) {
         _weekdayFont = weekdayFont;
         [_calendar.weekdays setValue:weekdayFont forKeyPath:@"font"];
+    }
+}
+
+- (void)setHeaderTitleFont:(UIFont *)font
+{
+    if (![_headerTitleFont isEqual:font]) {
+        _headerTitleFont = font;
+        [_calendar.header.collectionView reloadData];
     }
 }
 

@@ -65,5 +65,6 @@ typedef NS_OPTIONS(NSInteger, FSCalendarCellStyle) {
 @property (strong, nonatomic) UIFont *titleFont;
 @property (strong, nonatomic) UIFont *subtitleFont;
 @property (strong, nonatomic) UIFont *weekdayFont;
+@property (strong, nonatomic) UIFont *headerTitleFont;
 
 @end
