@@ -114,9 +114,7 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
     UIFont *weekdayFont = _appearance.weekdayFont ? _appearance.weekdayFont : [UIFont systemFontOfSize:_appearance.weekdayTextSize];
     for (int i = 0; i < weekSymbols.count; i++) {
         UILabel *weekdayLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        NSString *shortWeekname = weekSymbols[i];
-        NSInteger weekNameLength = shortWeekname.length < 1 ? 0 : (shortWeekname.length - 1);
-        weekdayLabel.text = [shortWeekname substringToIndex:weekNameLength];
+        weekdayLabel.text = [self processedWeekday:weekSymbols[i]];
         weekdayLabel.textAlignment = NSTextAlignmentCenter;
         weekdayLabel.font = weekdayFont;
         weekdayLabel.textColor = _appearance.weekdayTextColor;
@@ -189,6 +187,15 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (NSString *)processedWeekday:(NSString *)weekday {
+    return _appearance.veryShortWeekdayFormat ? [self veryShortWeekdayFromWeekday:weekday] : weekday;
+}
+
+- (NSString *)veryShortWeekdayFromWeekday:(NSString *)weekday {
+    NSInteger weekNameLength = weekday.length < 1 ? 0 : (weekday.length - 1);
+    return [weekday substringToIndex:weekNameLength];
 }
 
 - (void)updateWeekdaysFrames {
@@ -578,7 +585,7 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
             return;
         }
         UILabel *weekdayLabel = _weekdays[index];
-        weekdayLabel.text = symbol;
+        weekdayLabel.text = [self processedWeekday:symbol];
     }];
     
     UIFont *weekdayFont = _appearance.weekdayFont ? _appearance.weekdayFont : [UIFont systemFontOfSize:_appearance.weekdayTextSize];

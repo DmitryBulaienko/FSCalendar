@@ -58,6 +58,8 @@ typedef NS_OPTIONS(NSInteger, FSCalendarCellStyle) {
 #pragma mark - Custom
 
 @property (assign, nonatomic) BOOL topBottomBorderIsShown;
+@property (assign, nonatomic) BOOL veryShortWeekdayFormat;
+
 @property (strong, nonatomic) UIColor *weeksBackgroundColor;
 @property (strong, nonatomic) UIColor *eventHighlightedColor;
 
