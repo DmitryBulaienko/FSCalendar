@@ -206,17 +206,22 @@ static BOOL FSCalendarInInterfaceBuilder = NO;
 {
     [super layoutSubviews];
     _supressEvent = YES;
-    CGFloat padding = self.fs_height * 0.01;
+    
+    CGFloat verticalPadding = kVerticalPadding;
+    CGFloat horizontalPadding = kHorizontalPadding;
     _header.frame = CGRectMake(0, 0, self.fs_width, _headerHeight == -1 ? kDefaultHeaderHeight : _headerHeight);
     _deliver.frame = _header.frame;
     
     _collectionView.frame = CGRectMake(0, kWeekHeight+_header.fs_height, self.fs_width, self.fs_height-kWeekHeight-_header.fs_height);
     _collectionView.contentInset = UIEdgeInsetsZero;
     _collectionViewFlowLayout.itemSize = CGSizeMake(
-                                                    _collectionView.fs_width/7-(_scrollDirection == FSCalendarScrollDirectionVertical)*0.1,
-                                                    (_collectionView.fs_height-padding*2)/6
+                                                    (_collectionView.fs_width-horizontalPadding*2)/7-(_scrollDirection == FSCalendarScrollDirectionVertical)*0.1,
+                                                    (_collectionView.fs_height-verticalPadding*2)/6
                                                     );
-    _collectionViewFlowLayout.sectionInset = UIEdgeInsetsMake(padding, 0, padding, 0);
+    _collectionViewFlowLayout.sectionInset = UIEdgeInsetsMake(verticalPadding,
+                                                              horizontalPadding,
+                                                              verticalPadding,
+                                                              horizontalPadding);
     
     self.weeksBackgroundView.frame = CGRectMake(0,
                                                 _header.fs_height,
